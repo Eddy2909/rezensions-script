@@ -1,0 +1,40 @@
+# ==============================================================================
+# Schutz für Google Rezensionen Skript-Ordner
+# ==============================================================================
+
+# Verzeichnis-Listing deaktivieren
+Options -Indexes
+
+# ------------------------------------------------------------------------------
+# 1. Direkten HTTP-Aufruf sensibler PHP-Dateien und Konfigurationen sperren
+#    (Diese Dateien werden nur intern per PHP require/include geladen)
+# ------------------------------------------------------------------------------
+<FilesMatch "^(config\.php|GoogleReviewsService\.php|reviews_template\.php)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# ------------------------------------------------------------------------------
+# 2. Direkten Zugriff auf Cache, Logs, Git und temporäre Dateien komplett verbieten
+# ------------------------------------------------------------------------------
+<FilesMatch "\.(json|log|md|lock|git.*)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# ------------------------------------------------------------------------------
+# 3. Was BLEIBT öffentlich erreichbar?
+#    - api.php (wird für clientseitige Fetch-Aufrufe benötigt)
+#    - demo-*.php / demo-*.html (können optional nach Tests gelöscht werden)
+#    - assets/ (reviews.css, reviews.js, avatar-placeholder.svg)
+# ------------------------------------------------------------------------------
