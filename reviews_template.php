@@ -6,6 +6,12 @@
 
 declare(strict_types=1);
 
+// Direkten HTTP-Aufruf im Browser verhindern
+if (basename($_SERVER['SCRIPT_FILENAME'] ?? '') === basename(__FILE__)) {
+    http_response_code(403);
+    exit('403 Forbidden: Direkter Zugriff verweigert.');
+}
+
 require_once __DIR__ . '/GoogleReviewsService.php';
 
 /**

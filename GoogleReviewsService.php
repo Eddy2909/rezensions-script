@@ -7,6 +7,12 @@
  * DSGVO-konform: Webseiten-Besucher kommunizieren nie mit Google.
  */
 
+// Direkten HTTP-Aufruf im Browser verhindern
+if (basename($_SERVER['SCRIPT_FILENAME'] ?? '') === basename(__FILE__)) {
+    http_response_code(403);
+    exit('403 Forbidden: Direkter Zugriff verweigert.');
+}
+
 class GoogleReviewsService
 {
     private array $config;

@@ -1,11 +1,13 @@
 <?php
 /**
  * Konfiguration für das Google Rezensionen Script
- *
- * HINWEIS: Trage hier deinen echten API-Key und deine Place-ID ein.
- * Für zusätzliche Sicherheit sollte diese Datei im Webserver vor direktem
- * HTTP-Zugriff geschützt sein (z.B. per .htaccess).
  */
+
+// Direkten HTTP-Aufruf im Browser verhindern
+if (basename($_SERVER['SCRIPT_FILENAME'] ?? '') === basename(__FILE__)) {
+    http_response_code(403);
+    exit('403 Forbidden: Direkter Zugriff verweigert.');
+}
 
 return [
     // -------------------------------------------------------------------------
