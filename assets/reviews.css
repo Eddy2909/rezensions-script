@@ -1,0 +1,286 @@
+/**
+ * Google Rezensionen Component - Stylesheet
+ * Neutrales, modernes Design mit CSS-Custom-Properties (leicht per Theme anpassbar)
+ */
+
+:root {
+  --gr-bg: #ffffff;
+  --gr-card-bg: #ffffff;
+  --gr-card-border: #e2e8f0;
+  --gr-card-radius: 12px;
+  --gr-card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --gr-text-main: #1e293b;
+  --gr-text-muted: #64748b;
+  --gr-text-date: #94a3b8;
+  --gr-star-filled: #f59e0b;
+  --gr-star-empty: #e2e8f0;
+  --gr-badge-bg: #f8fafc;
+  --gr-accent: #2563eb;
+  --gr-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.gr-container {
+  font-family: var(--gr-font);
+  color: var(--gr-text-main);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  box-sizing: border-box;
+}
+
+.gr-container *,
+.gr-container *::before,
+.gr-container *::after {
+  box-sizing: border-box;
+}
+
+/* Header & Gesamtbewertung */
+.gr-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--gr-card-border);
+}
+
+.gr-header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+  color: var(--gr-text-main);
+}
+
+.gr-badge-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--gr-badge-bg);
+  border: 1px solid var(--gr-card-border);
+  padding: 0.6rem 1rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.gr-badge-summary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.gr-score-number {
+  font-weight: 800;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.gr-stars {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--gr-star-filled);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.gr-star-empty {
+  color: var(--gr-star-empty);
+}
+
+.gr-count {
+  font-size: 0.875rem;
+  color: var(--gr-text-muted);
+}
+
+.gr-google-logo {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.25rem;
+}
+
+/* Grid der Karten */
+.gr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Einzelne Karte */
+.gr-card {
+  background: var(--gr-card-bg);
+  border: 1px solid var(--gr-card-border);
+  border-radius: var(--gr-card-radius);
+  padding: 1.5rem;
+  box-shadow: var(--gr-card-shadow);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+
+.gr-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+}
+
+/* User-Info Kopfzeile */
+.gr-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-bottom: 0.875rem;
+}
+
+.gr-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background-color: #f1f5f9;
+  border: 1px solid var(--gr-card-border);
+}
+
+.gr-author-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.gr-author-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--gr-text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.gr-author-name a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.gr-author-name a:hover {
+  text-decoration: underline;
+}
+
+.gr-review-date {
+  font-size: 0.75rem;
+  color: var(--gr-text-date);
+  margin-top: 2px;
+}
+
+.gr-card-stars {
+  margin-bottom: 0.875rem;
+}
+
+/* Rezensionstext & Auslaufen / Fade-Out */
+.gr-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.gr-text-wrapper {
+  position: relative;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+/* Wenn Text abgeschnitten ist: feste max-height und sanfter Verlauf */
+.gr-text-wrapper.is-collapsed {
+  max-height: 5.5em; /* ca. 3–4 Textzeilen */
+}
+
+.gr-text-wrapper.is-collapsed::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2.75em;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--gr-card-bg));
+  pointer-events: none;
+}
+
+.gr-text {
+  font-size: 0.925rem;
+  line-height: 1.55;
+  color: var(--gr-text-main);
+  margin: 0;
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+/* "Mehr anzeigen" Toggle-Button */
+.gr-toggle-btn {
+  background: none;
+  border: none;
+  padding: 0.5rem 0 0 0;
+  margin-top: 0.25rem;
+  color: var(--gr-accent);
+  font-size: 0.825rem;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: opacity 0.15s ease;
+}
+
+.gr-toggle-btn:hover {
+  text-decoration: underline;
+  opacity: 0.85;
+}
+
+/* Footer / Hinweis */
+.gr-footer {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--gr-text-muted);
+}
+
+.gr-footer a {
+  color: var(--gr-accent);
+  text-decoration: none;
+}
+
+.gr-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Lade- und Fehlerzustände */
+.gr-loading,
+.gr-error,
+.gr-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--gr-text-muted);
+  font-size: 0.95rem;
+}
+
+.gr-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--gr-card-border);
+  border-top-color: var(--gr-accent);
+  border-radius: 50%;
+  animation: gr-spin 0.8s linear infinite;
+  margin: 0 auto 1rem auto;
+}
+
+@keyframes gr-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 640px) {
+  .gr-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .gr-grid {
+    grid-template-columns: 1fr;
+  }
+}

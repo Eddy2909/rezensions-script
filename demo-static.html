@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Rezensionen Demo (HTML + JS)</title>
+  
+  <!-- Neutrales Stylesheet für die Rezensionen -->
+  <link rel="stylesheet" href="assets/reviews.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 2rem 1rem;
+      background: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .demo-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    }
+    .demo-intro {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="demo-wrapper">
+    <div class="demo-intro">
+      <h1>Statische HTML/JS-Einbindung</h1>
+      <p>Die Bewertungen werden per JavaScript asynchron von der lokalen <code>api.php</code> geladen. Die Besucher verbinden sich nie direkt mit Google (100% DSGVO-konform).</p>
+    </div>
+
+    <!-- Container für das Widget (wird per JS befüllt) -->
+    <div id="google-reviews-container"></div>
+  </div>
+
+  <!-- JavaScript-Logik -->
+  <script src="assets/reviews.js"></script>
+  <script>
+    // Initialisierung des Widgets
+    document.addEventListener('DOMContentLoaded', () => {
+      new GoogleReviewsWidget({
+        container: '#google-reviews-container',
+        apiUrl: 'api.php',
+        excerptLength: 160
+      });
+    });
+  </script>
+
+</body>
+</html>
