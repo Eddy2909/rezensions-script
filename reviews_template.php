@@ -8,17 +8,26 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/GoogleReviewsService.php';
 
-function renderGoogleReviews(?array $config = null): string
+/**
+ * Rendert das HTML für die Google-Rezensionen.
+ *
+ * @param array|null $config Optionale Konfigurationsüberschreibungen
+ * @param string $assetsPath Web-Pfad zum Assets-Ordner (z.B. 'google-reviews/assets/' oder '/unterordner/assets/')
+ * @return string HTML-Code
+ */
+function renderGoogleReviews(?array $config = null, string $assetsPath = 'assets/'): string
 {
     $service = new GoogleReviewsService($config);
     $data = $service->getReviews();
+
+    $assetsPath = rtrim($assetsPath, '/') . '/';
+    $fallbackAvatar = $assetsPath . 'avatar-placeholder.svg';
 
     $reviews = $data['reviews'] ?? [];
     $rating = number_format((float) ($data['rating'] ?? 0), 1, ',', '.');
     $rawRating = (float) ($data['rating'] ?? 0);
     $userRatingCount = (int) ($data['user_rating_count'] ?? 0);
     $placeUrl = htmlspecialchars($data['place_url'] ?? 'https://www.google.com/maps', ENT_QUOTES, 'UTF-8');
-    $fallbackAvatar = 'assets/avatar-placeholder.svg';
 
     if (empty($reviews)) {
         return '<div class="gr-container"><div class="gr-empty"><p>Aktuell liegen keine Bewertungen vor.</p></div></div>';

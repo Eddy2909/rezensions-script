@@ -5,7 +5,7 @@ Ein schlankes, modulares und wiederverwendbares Skript, um **Google Rezensionen*
 ## Die Kernvorteile auf einen Blick
 
 - **100% DSGVO-konform:** Webseiten-Besucher kommunizieren **nie** mit Google. Kein Google-Skript oder externer iFrame im Frontend. Daher ist **kein Cookie-Consent-Banner** für die Rezensionen nötig.
-- **Wiederverwendbar & flexibel:** Konfiguration komplett über eine zentrale Datei (`config.php`). Funktioniert auf unzähligen Domains/Websites parallel.
+- **Wiederverwendbar & flexibel:** Konfiguration komplett über eine zentrale Datei (`config.php`). Funktioniert im Root-Verzeichnis oder in jedem beliebigen Unterordner.
 - **Kostenlos & ToS-konform:** Dank serverseitigem Caching (empfohlen 24h oder 7 Tage, max. 30 Tage laut Google ToS) bleibt der Abruf im monatlichen Free-Kontingent der Google Places API.
 - **Modernes, neutrales Design:** Responsive CSS-Grid-Karten, Google-Sterne, User-Avatar mit Fallback und eleganter **Text-Fade-Out-Verlauf** mit „Mehr lesen“-Toggle für lange Rezensionen.
 - **Zwei Einbindungs-Wege:** 
@@ -37,90 +37,84 @@ rezensions-script/
 ## Schnellstart
 
 ### 1. Dateien hochladen
-Kopiere den Ordner (oder die Dateien) auf deinen Webspace (Shared Hosting / Apache mit PHP 7.4, 8.0, 8.1, 8.2, 8.3 oder 8.5).
+Kopiere den Ordner (z. B. als Unterordner `google-reviews/`) auf deinen Webspace (Shared Hosting / Apache mit PHP 7.4–8.5).
 
 ### 2. Konfiguration anpassen (`config.php`)
 Öffne `config.php` und trage deinen Google API-Key und deine Place-ID ein:
 
 ```php
 return [
-    // Dein Google API-Key mit aktivierter "Places API (New)"
     'api_key' => 'AIzaSy...',
-
-    // Die Place-ID deines Google Unternehmensprofils
     'place_id' => 'ChIJN1t_tDeuEmsRUsoyG83frY4',
-
-    // Cache-Dauer in Sekunden (z.B. 86400 = 24 Stunden, 604800 = 7 Tage)
-    // HINWEIS: Google ToS erlaubt maximal 30 Tage Caching!
-    'cache_lifetime_seconds' => 86400,
-
-    // Max. Anzahl an Rezensionen (Google liefert technisch max. 5)
+    'cache_lifetime_seconds' => 86400, // 24 Stunden (max. 30 Tage)
     'max_reviews' => 5,
-
-    // Mindestanzahl an Sternen (z.B. 4 für nur 4- und 5-Sterne-Rezensionen)
     'min_rating' => 1,
-
-    // Textlänge vor dem Fade-Out-Ausschnitt
     'excerpt_length' => 160,
 ];
 ```
 
 ---
 
-## Einbindungsmethoden
+## Einbindung aus der Root `index.php` (wenn das Skript im Unterordner liegt)
 
-### Variante A: In eine statische HTML-Seite (mit JavaScript)
+Wenn du alle Dateien z. B. in den Unterordner `/google-reviews/` gelegt hast und von der Root `index.php` aus darauf zugreifen möchtest:
 
-Füge im `<head>` das CSS ein:
-```html
-<link rel="stylesheet" href="assets/reviews.css">
-```
+### 1. Serverseitig in PHP (Empfohlen)
 
-Platziere an der gewünschten Stelle den Ziel-Container:
-```html
-<div id="google-reviews"></div>
-```
-
-Binde vor dem schließenden `</body>` das Script ein und initialisiere es:
-```html
-<script src="assets/reviews.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    new GoogleReviewsWidget({
-      container: '#google-reviews',
-      apiUrl: 'api.php',
-      excerptLength: 160
-    });
-  });
-</script>
-```
-
----
-
-### Variante B: Direkt serverseitig in eine PHP-Seite
-
-Ideal für maximale SEO-Sichtbarkeit und null Layout-Shift / Ladezeit:
-
+In deiner `/index.php`:
 ```php
 <?php
-require_once __DIR__ . '/reviews_template.php';
+// 1. Template aus dem Unterordner einbinden
+require_once __DIR__ . '/google-reviews/reviews_template.php';
 ?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <link rel="stylesheet" href="assets/reviews.css">
+  <!-- 2. CSS-Pfad auf den Unterordner anpassen -->
+  <link rel="stylesheet" href="google-reviews/assets/reviews.css">
 </head>
 <body>
 
-  <!-- Rendert die Rezensionen sofort ins HTML -->
-  <?= renderGoogleReviews(); ?>
+  <!-- 3. Rendern mit Pfad zu den Assets übergeben -->
+  <?= renderGoogleReviews(null, 'google-reviews/assets/'); ?>
 
-  <!-- JS wird hier nur für den interaktiven "Mehr lesen"-Klick benötigt -->
-  <script src="assets/reviews.js"></script>
+  <!-- 4. JS für das interaktive 'Mehr lesen' einbinden -->
+  <script src="google-reviews/assets/reviews.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const widget = new GoogleReviewsWidget({ container: document.body });
       widget.attachToggleListeners();
+    });
+  </script>
+</body>
+</html>
+```
+
+---
+
+### 2. Clientseitig per HTML & JavaScript
+
+In deiner `/index.html`:
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <link rel="stylesheet" href="google-reviews/assets/reviews.css">
+</head>
+<body>
+
+  <div id="google-reviews"></div>
+
+  <script src="google-reviews/assets/reviews.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      new GoogleReviewsWidget({
+        container: '#google-reviews',
+        // apiUrl und fallbackAvatar auf den Unterordner zeigen lassen:
+        apiUrl: 'google-reviews/api.php',
+        fallbackAvatar: 'google-reviews/assets/avatar-placeholder.svg',
+        excerptLength: 160
+      });
     });
   </script>
 </body>
